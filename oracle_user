@@ -273,10 +273,10 @@ def modify_user(module, msg, cursor, schema, schema_password, schema_password_ha
 		wanted_list.append(authentication_type)
 
 	if default_tablespace:
-		wanted_list.append(default_tablespace)
+		wanted_list.append(default_tablespace.lower())
 
 	if default_temp_tablespace:
-		wanted_list.append(default_temp_tablespace)
+		wanted_list.append(default_temp_tablespace.lower())
 
 	if profile:
 		wanted_list.append(profile)
