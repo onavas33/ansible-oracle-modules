@@ -113,6 +113,11 @@ options:
 			- The database characterset
 		required: False
 		default: AL32UTF8
+	nationalcharacterset:
+		description:
+			- The database national characterset
+		required: False
+		default: AL16UTF16
 	memory_percentage:
 		description:
 			- The database total memory in % of available memory
@@ -358,7 +363,7 @@ def check_db_exists(module, msg, oracle_home, db_name, sid, db_unique_name ):
 
 
 def create_db (module, msg, oracle_home, sys_password, system_password, dbsnmp_password, db_name, sid, db_unique_name, responsefile, template, cdb,
-			  local_undo, datafile_dest, recoveryfile_dest, storage_type, dbconfig_type, racone_service, characterset, memory_percentage, memory_totalmb,
+			  local_undo, datafile_dest, recoveryfile_dest, storage_type, dbconfig_type, racone_service, characterset, nationalcharacterset, memory_percentage, memory_totalmb,
 			  nodelist, db_type, amm, initparams, customscripts, datapatch, domain):
 
 	initparam = ' -initParams '
@@ -450,6 +455,8 @@ def create_db (module, msg, oracle_home, sys_password, system_password, dbsnmp_p
 			command += ' -RACOneNodeServiceName %s ' % (racone_service)
 		if characterset != None:
 			command += ' -characterSet %s ' % (characterset)
+		if nationalcharacterset != None:
+			command += ' -nationalCharacterSet %s ' % (nationalcharacterset)
 		if memory_percentage != None:
 			command += ' -memoryPercentage %s ' % (memory_percentage)
 		if memory_totalmb != None:
@@ -921,6 +928,7 @@ def main():
 			db_type             = dict(default='MULTIPURPOSE',choices = ['MULTIPURPOSE','DATA_WAREHOUSING','OLTP']),
 			racone_service      = dict(required=False,aliases = ['ron_service']),
 			characterset        = dict(default='AL32UTF8'),
+			nationalcharacterset  = dict(default='AL16UTF16'),
 			memory_percentage   = dict(required=False),
 			memory_totalmb      = dict(default='1024'),
 			nodelist            = dict(required=False, type='list'),
@@ -965,6 +973,7 @@ def main():
 	dbconfig_type       = module.params["dbconfig_type"]
 	racone_service      = module.params["racone_service"]
 	characterset        = module.params["characterset"]
+	nationalcharacterset  = module.params["nationalcharacterset"]
 	memory_percentage   = module.params["memory_percentage"]
 	memory_totalmb      = module.params["memory_totalmb"]
 	nodelist            = module.params["nodelist"]
@@ -1045,7 +1054,7 @@ def main():
 	elif state == 'present':
 		if not check_db_exists(module, msg, oracle_home,db_name, sid, db_unique_name):
 			if create_db(module, msg, oracle_home, sys_password, system_password, dbsnmp_password, db_name, sid, db_unique_name, responsefile, template, cdb, local_undo, datafile_dest, recoveryfile_dest,
-						storage_type, dbconfig_type, racone_service, characterset, memory_percentage, memory_totalmb, nodelist, db_type, amm, initparams, customscripts,datapatch, domain):
+						storage_type, dbconfig_type, racone_service, characterset, nationalcharacterset, memory_percentage, memory_totalmb, nodelist, db_type, amm, initparams, customscripts,datapatch, domain):
 				newdb = True
 				ensure_db_state (module,msg,oracle_home,db_name,db_unique_name,sid, archivelog, force_logging, supplemental_logging, flashback, default_tablespace_type,default_tablespace,default_temp_tablespace, timezone)
 			else:
